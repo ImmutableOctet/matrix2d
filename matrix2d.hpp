@@ -252,6 +252,7 @@ namespace immutableoctet
 				return VectorType { std::get<0>(result), std::get<1>(result) };
 			}
 
+			// Transforms a copy of this matrix using `m`, returning the result.
 			constexpr basic_matrix_2d multiply(const basic_matrix_2d& m) const
 			{
 				const auto a  = ((this->mA * m.mA) + (this->mB * m.mC));
@@ -264,6 +265,7 @@ namespace immutableoctet
 				return basic_matrix_2d { a, b, c, d, tx, ty };
 			}
 
+			// Transposes this matrix. (i.e. swaps rows and columns)
 			constexpr basic_matrix_2d transpose() const
 			{
 				return basic_matrix_2d
@@ -273,8 +275,8 @@ namespace immutableoctet
 				};
 			}
 
-			// Accesses a matrix element by index.
 #ifdef IMMUTABLEOCTET_MATRIX2D_TYPE_PUNNING
+			// Accesses a matrix element by index.
 			constexpr value_type operator[](std::size_t index) const // const value_type&
 			{
 				assert(index < size());
@@ -298,6 +300,7 @@ namespace immutableoctet
 #endif
 
 #ifdef IMMUTABLEOCTET_MATRIX2D_TYPE_PUNNING
+			// Accesses a matrix element by index.
 			constexpr value_type& operator[](std::size_t index)
 			{
 				assert(index < size());
@@ -325,16 +328,19 @@ namespace immutableoctet
 				return concatenate(m);
 			}
 
+			// Transforms a 2D point using the geometric transformation of this matrix.
 			constexpr std::pair<value_type, value_type> operator*(const std::pair<value_type, value_type>& point) const
 			{
 				return transform_point(point);
 			}
 
+			// Transforms a 2D point/vector using the geometric transformation of this matrix.
 			constexpr typename std::enable_if<has_vector_type, VectorType>::type operator*(const VectorType& point) const
 			{
 				return transform_point(point);
 			}
 
+			// Transforms a copy of this matrix using `m`, returning the result.
 			constexpr basic_matrix_2d operator*(const basic_matrix_2d& m) const
 			{
 				return multiply(m);
