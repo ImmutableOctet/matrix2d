@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef IMMUTABLEOCTET_MATRIX2D_HPP
 
 #define IMMUTABLEOCTET_MATRIX2D_HPP
@@ -20,6 +18,8 @@ namespace immutableoctet
 	{
 		public:
 			using value_type = ValueType;
+
+            static constexpr auto Pi = static_cast<ValueType>(3.14159265358979323846264338327950288);
 
 			static constexpr bool has_vector_type = (!std::is_same<VectorType, void>::value); // inline
 
@@ -274,6 +274,53 @@ namespace immutableoctet
 					mB, mD, mTy
 				};
 			}
+
+            constexpr ValueType get_translation_x() const
+            {
+                return mTx;
+            }
+
+            constexpr ValueType get_translation_y() const
+            {
+                return mTy;
+            }
+
+            constexpr ValueType get_rotation() const
+            {
+                return std::atan2(mB, mA);
+            }
+
+            constexpr ValueType get_shear(ValueType rotation) const
+            {
+                return (std::atan2(mD, mC) - Pi / 2 - rotation);
+            }
+            
+            constexpr ValueType get_shear() const
+            {
+                return get_shear(get_rotation());
+            }
+
+            constexpr ValueType get_scale_x() const
+            {
+                return std::sqrt(mA * mA + mB * mB);
+            }
+
+            constexpr ValueType get_scale_y() const
+            {
+                return std::sqrt(mC * mC + mD * mD);
+            }
+
+            constexpr typename std::enable_if<has_vector_type>::type decompose(VectorType& translation_out, float& rotation_out, float& shear_out, VectorType& scale_out) const
+            {
+                translation_out = VectorType { get_translation_x(), get_translation_y() };
+
+                const auto rotation = get_rotation();
+
+                rotation_out = rotation;
+                shear_out = get_shear(rotation);
+
+                scale_out = VectorType { get_scale_x(), get_scale_y() };
+            }
 
 #ifdef IMMUTABLEOCTET_MATRIX2D_TYPE_PUNNING
 			// Accesses a matrix element by index.
