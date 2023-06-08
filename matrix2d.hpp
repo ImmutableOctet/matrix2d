@@ -18,8 +18,8 @@ namespace immutableoctet
 	{
 		public:
 			using value_type = ValueType;
-
-            static constexpr auto Pi = static_cast<ValueType>(3.14159265358979323846264338327950288);
+			
+			static constexpr auto Pi = static_cast<ValueType>(3.14159265358979323846264338327950288);
 
 			static constexpr bool has_vector_type = (!std::is_same<VectorType, void>::value); // inline
 
